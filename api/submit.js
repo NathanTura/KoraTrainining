@@ -21,16 +21,17 @@ export default async function handler(req, res) {
         const chatId = process.env.TELEGRAM_CHAT_ID;
         
          
-        const telegramMsg = `
-🚀 *New KORA Customer Received!*
-━━━━━━━━━━━━━━━
-👤 *Name:* ${name}
-📧 *Email:* ${email}
-📞 *Phone:* ${phone}
-🏋️ *Service:* ${service}
-📝 *Message:* ${message || 'No message provided'}
-━━━━━━━━━━━━━━━
-        `;
+   const telegramMsg = `
+    🚀 *New KORA Lead!*
+    ━━━━━━━━━━━━━━━
+    👤 *Name:* ${name}
+    📧 *Email:* ${email}
+    📞 *Phone:* ${phone}
+    📱 *Telegram:* ${req.body.telegram} 
+    🏋️ *Service:* ${service}
+    📝 *Msg:* ${message}
+    ━━━━━━━━━━━━━━━
+`;
 
         await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
             method: 'POST',

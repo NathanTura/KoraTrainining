@@ -400,163 +400,38 @@
         </p>
 
         <!-- Form -->
-        <form
-          id="koraForm"
-          onsubmit="handleForm(event)"
-          style="display: flex; flex-direction: column; gap: 20px"
-        >
-          <div class="form-group" style="display: flex; flex-direction: column">
-            <label
-              style="
-                font-weight: 600;
-                font-size: 0.85rem;
-                color: var(--kora-green);
-                margin-bottom: 5px;
-              "
-              >Full Name</label
-            >
-            <input
-              type="text"
-              required
-              placeholder="Enter Full Name"
-              style="
-                padding: 15px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                outline: none;
-                transition: all 0.3s;
-              "
-            />
-          </div>
+       <form id="koraForm" onsubmit="handleForm(event)" style="display: flex; flex-direction: column; gap: 20px">
+    <div class="form-group" style="display: flex; flex-direction: column">
+        <label style="font-weight: 600; font-size: 0.85rem; color: var(--kora-green); margin-bottom: 5px;">Full Name</label>
+        <input type="text" name="name" required placeholder="Enter Full Name" style="padding: 15px; border: 1px solid #ddd; border-radius: 4px; outline: none;" />
+    </div>
 
-          <div class="form-group" style="display: flex; flex-direction: column">
-            <label
-              style="
-                font-weight: 600;
-                font-size: 0.85rem;
-                color: var(--kora-green);
-                margin-bottom: 5px;
-              "
-              >Email Address</label
-            >
-            <input
-              type="email"
-              required
-              placeholder="Enter Email"
-              style="
-                padding: 15px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                outline: none;
-                transition: all 0.3s;
-              "
-            />
-          </div>
+    <div class="form-group" style="display: flex; flex-direction: column">
+        <label style="font-weight: 600; font-size: 0.85rem; color: var(--kora-green); margin-bottom: 5px;">Email Address</label>
+        <input type="email" name="email" required placeholder="Enter Email" style="padding: 15px; border: 1px solid #ddd; border-radius: 4px; outline: none;" />
+    </div>
 
-          <div class="form-group" style="display: flex; flex-direction: column">
-            <label
-              style="
-                font-weight: 600;
-                font-size: 0.85rem;
-                color: var(--kora-green);
-                margin-bottom: 5px;
-              "
-              >Phone Number</label
-            >
-            <input
-              type="tel"
-              required
-              placeholder="Mobile Number"
-              style="
-                padding: 15px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                outline: none;
-                transition: all 0.3s;
-              "
-            />
-          </div>
+    <div class="form-group" style="display: flex; flex-direction: column">
+        <label style="font-weight: 600; font-size: 0.85rem; color: var(--kora-green); margin-bottom: 5px;">Phone Number</label>
+        <input type="tel" name="phone" required placeholder="Mobile Number" style="padding: 15px; border: 1px solid #ddd; border-radius: 4px; outline: none;" />
+    </div>
 
-          <div class="form-group" style="display: flex; flex-direction: column">
-            <label
-              style="
-                font-weight: 600;
-                font-size: 0.85rem;
-                color: var(--kora-green);
-                margin-bottom: 5px;
-              "
-              >WhatsApp Number</label
-            >
-            <input
-              type="tel"
-              placeholder="For faster communication"
-              style="
-                padding: 15px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                outline: none;
-                transition: all 0.3s;
-              "
-            />
-          </div>
+    <div class="form-group" style="display: flex; flex-direction: column">
+        <label style="font-weight: 600; font-size: 0.85rem; color: var(--kora-green); margin-bottom: 5px;">Telegram Username</label>
+        <input type="text" name="telegram" required placeholder="@username" style="padding: 15px; border: 1px solid #ddd; border-radius: 4px; outline: none;" />
+    </div>
 
-          <div class="form-group" style="display: flex; flex-direction: column">
-            <label
-              style="
-                font-weight: 600;
-                font-size: 0.85rem;
-                color: var(--kora-green);
-                margin-bottom: 5px;
-              "
-              >Telegram Username</label
-            >
-            <input
-              type="text"
-              placeholder="@username"
-              style="
-                padding: 15px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                outline: none;
-                transition: all 0.3s;
-              "
-            />
-          </div>
+    <div class="form-group" style="display: flex; flex-direction: column">
+        <label style="font-weight: 600; font-size: 0.85rem; color: var(--kora-green); margin-bottom: 5px;">Additional Message (Optional)</label>
+        <textarea name="message" placeholder="Tell us about your goals..." style="padding: 15px; border: 1px solid #ddd; border-radius: 4px; outline: none; resize: vertical; min-height: 80px;"></textarea>
+    </div>
 
-          <input type="hidden" id="serviceType" name="service" />
+    <input type="hidden" id="serviceType" name="service" />
 
-          <!-- Submit Button -->
-          <button
-            type="submit"
-            class="form-submit"
-            style="
-              padding: 16px;
-              background: var(--kora-green);
-              color: #fff;
-              font-weight: 700;
-              font-size: 1rem;
-              border: none;
-              border-radius: 4px;
-              cursor: pointer;
-              transition: all 0.3s ease;
-            "
-            onmouseover="this.style.background='#1f2b28';"
-            onmouseout="this.style.background='var(--kora-green)';"
-          >
-            Submit Application
-          </button>
-
-          <p
-            style="
-              text-align: center;
-              margin-top: 10px;
-              font-size: 0.8rem;
-              color: #999;
-            "
-          >
-            *We will contact you shortly with pricing and onboarding details.
-          </p>
-        </form>
+    <button type="submit" class="form-submit" style="padding: 16px; background: var(--kora-green); color: #fff; font-weight: 700; border: none; border-radius: 4px; cursor: pointer;">
+        Submit Application
+    </button>
+</form>
       </div>
     </section>
 
