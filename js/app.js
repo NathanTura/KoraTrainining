@@ -37,10 +37,12 @@ async function handleForm(e) {
         name: formData.get('name'),
         email: formData.get('email'),
         phone: formData.get('phone'),
-        telegram: formData.get('telegram'), // Matches the 'name="telegram"' in HTML
-        message: formData.get('message') || "No message provided",
+        whatsapp: formData.get('whatsapp') || 'N/A',
+        telegram: formData.get('telegram') || 'N/A',
+        message: formData.get('message') || 'No message provided',
         service: service
     };
+
 
     // UI Feedback
     submitBtn.innerText = "Processing...";
