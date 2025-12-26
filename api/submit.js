@@ -18,16 +18,14 @@ export default async function handler(req, res) {
   let connection;
 
   try {
-    // 2️⃣ Create DB Connection (Vercel Safe)
+        // 2️⃣ Create DB Connection (Vercel Safe)
     connection = await mysql.createConnection({
-      host: process.env.MYSQL_HOST,
-      user: process.env.MYSQL_USER,
-      password: process.env.MYSQL_PASSWORD,
-      database: process.env.MYSQL_DATABASE,
-      port: process.env.MYSQL_PORT || 3306,
-      ssl: {
-        rejectUnauthorized: true, // REQUIRED for most hosted DBs
-      },
+    host: process.env.MYSQL_HOST,
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.MYSQL_DATABASE,
+    port: process.env.MYSQL_PORT || 3306,
+    ssl: false,
     });
 
     // 3️⃣ Insert Lead
