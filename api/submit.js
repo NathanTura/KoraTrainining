@@ -11,14 +11,14 @@ async function saveLeadToDB(data) {
   });
 
   const query = `
-    INSERT INTO leads (name, email, phone, whatsapp, telegram_user, service_type, message)
+    INSERT INTO leads (name, email, phone, whatsapp_user, telegram_user, service_type, message)
     VALUES (?, ?, ?, ?, ?, ?, ?)
   `;
   const values = [
     data.name,
     data.email,
     data.phone,
-    data.whatsapp,
+    data.whatsapp_user,
     data.telegram_user,
     data.service_type,
     data.message,
@@ -39,8 +39,8 @@ async function sendTelegramMessage(data) {
 
   if (!botToken || !chatId) return false;
 
-  const waLink = data.whatsapp !== 'N/A'
-    ? `[WhatsApp](https://wa.me/${data.whatsapp.replace(/\D/g,'')})`
+  const waLink = data.whatsapp_user !== 'N/A'
+    ? `[WhatsApp](https://wa.me/${data.whatsapp_user.replace(/\D/g,'')})`
     : 'N/A';
 
   const tgLink = data.telegram_user !== 'N/A'
@@ -84,7 +84,7 @@ export default async function handler(req, res) {
     name: req.body?.name || 'Unknown',
     email: req.body?.email || 'No Email',
     phone: req.body?.phone || 'No Phone',
-    whatsapp: req.body?.whatsapp || 'N/A',
+    whatsapp_user: req.body?.whatsapp || 'N/A',
     telegram_user: req.body?.telegram || 'N/A',
     service_type: req.body?.service || 'General Inquiry',
     message: req.body?.message || 'No message provided',
