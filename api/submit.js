@@ -34,10 +34,10 @@ async function saveLeadToDB(data) {
   }
 }
 
-// --- Helper: Send Telegram notification ---
+// --- Helper: Send Telegram notification to multiple users ---
 async function sendTelegramMessage(data) {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
+  const chatId = process.env.TELEGRAM_CHAT_ID; // Can still keep a main group or your own ID
 
   if (!botToken || !chatId) {
     console.warn('Telegram bot token or chat ID missing!');
@@ -46,16 +46,17 @@ async function sendTelegramMessage(data) {
 
   const cleanPhone = data.phone.replace(/\D/g, '');
   const waLink = cleanPhone ? `[WhatsApp](https://wa.me/${cleanPhone})` : 'N/A';
-  const tgLink = data.telegram.includes('@')
-    ? `[Telegram](https://t.me/${data.telegram.replace('@', '')})`
-    : data.telegram;
+
+  // List of Telegram usernames to notify
+  const telegramUsers = ['@Da_Virus', '@urmomlolXD'];
+  const tgLinks = telegramUsers.map(user => `[${user}](https://t.me/${user.replace('@','')})`).join(' | ');
 
   const telegramMsg =
     `🚀 *New KORA Lead!*\n\n` +
     `👤 *Name:* ${data.name}\n` +
     `📧 *Email:* ${data.email}\n` +
     `📞 *Phone:* ${data.phone}\n` +
-    `📱 *Links:* ${tgLink} | ${waLink}\n` +
+    `📱 *Links:* ${tgLinks} | ${waLink}\n` +
     `🏋️ *Service:* ${data.service}\n` +
     `📝 *Msg:* ${data.message}`;
 
