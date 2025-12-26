@@ -15,6 +15,7 @@
   box-sizing: border-box;
 }
 
+
 body {
   font-family: "Inter", sans-serif;
   background-color: var(--white-bg);
@@ -26,6 +27,7 @@ body {
 }
 html {
   scroll-behavior: smooth;
+  transition: all .5s ease;
 }
 h1,
 h2,
