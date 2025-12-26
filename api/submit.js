@@ -1,6 +1,6 @@
 import mysql from 'mysql2/promise';
 
-// --- Helper: Save lead to DB ---
+// --- Save lead to DB ---
 async function saveLeadToDB(data) {
   const connection = await mysql.createConnection({
     host: process.env.MYSQL_HOST,
@@ -8,7 +8,6 @@ async function saveLeadToDB(data) {
     password: process.env.MYSQL_PASSWORD,
     database: process.env.MYSQL_DATABASE,
     port: process.env.MYSQL_PORT || 3306,
-    ssl: { rejectUnauthorized: false },
   });
 
   const query = `
@@ -33,21 +32,18 @@ async function saveLeadToDB(data) {
   }
 }
 
-// --- Helper: Send Telegram notification ---
+// --- Send Telegram notification ---
 async function sendTelegramMessage(data) {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
 
-  if (!botToken || !chatId) {
-    console.warn('Telegram bot token or chat ID missing!');
-    return false;
-  }
+  if (!botToken || !chatId) return false;
 
-  const waLink = data.whatsapp && data.whatsapp !== 'N/A'
-    ? `[WhatsApp](https://wa.me/${data.whatsapp.replace(/\D/g, '')})`
+  const waLink = data.whatsapp !== 'N/A'
+    ? `[WhatsApp](https://wa.me/${data.whatsapp.replace(/\D/g,'')})`
     : 'N/A';
 
-  const tgLink = data.telegram_user && data.telegram_user !== 'N/A'
+  const tgLink = data.telegram_user !== 'N/A'
     ? `[Telegram](https://t.me/${data.telegram_user.replace(/^@/, '')})`
     : 'N/A';
 
@@ -73,41 +69,33 @@ async function sendTelegramMessage(data) {
       }),
     });
     const result = await response.json();
-    if (!result.ok) console.error('Telegram API error:', result);
     return result.ok;
   } catch (err) {
-    console.error('Failed to send Telegram message:', err);
+    console.error('Telegram error:', err);
     return false;
   }
 }
 
 // --- API Handler ---
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  // --- Gather data from request ---
   const data = {
     name: req.body?.name || 'Unknown',
     email: req.body?.email || 'No Email',
     phone: req.body?.phone || 'No Phone',
     whatsapp: req.body?.whatsapp || 'N/A',
-    telegram_user: req.body?.telegram || 'N/A', // <-- FIXED
+    telegram_user: req.body?.telegram || 'N/A',
     service_type: req.body?.service || 'General Inquiry',
     message: req.body?.message || 'No message provided',
   };
 
   try {
-    const dbResult = await saveLeadToDB(data);
-    console.log('Lead saved to DB:', dbResult);
-
-    const telegramSent = await sendTelegramMessage(data);
-    if (!telegramSent) console.warn('Telegram message not sent!');
-
-    return res.status(200).json({ success: true, telegramSent });
+    await saveLeadToDB(data);
+    await sendTelegramMessage(data);
+    return res.status(200).json({ success: true });
   } catch (err) {
-    console.error('API ERROR:', err);
+    console.error(err);
     return res.status(500).json({ success: false, error: err.message });
   }
 }
