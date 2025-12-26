@@ -19,10 +19,10 @@ async function saveLeadToDB(data) {
     data.name,
     data.email,
     data.phone,
-    data.whatsapp || 'N/A',       // WhatsApp username
-    data.telegram || 'N/A',       // Telegram username
-    data.service,
-    data.message || '',
+    data.whatsapp,
+    data.telegram_user,
+    data.service_type,
+    data.message,
   ];
 
   try {
@@ -43,18 +43,22 @@ async function sendTelegramMessage(data) {
     return false;
   }
 
-  const cleanPhone = data.phone.replace(/\D/g, '');
-  const waLink = data.whatsapp ? `[WhatsApp](https://wa.me/${cleanPhone})` : 'N/A';
-  const tgLink = data.telegram ? `[Telegram](https://t.me/${data.telegram.replace('@','')})` : 'N/A';
+  const waLink = data.whatsapp && data.whatsapp !== 'N/A'
+    ? `[WhatsApp](https://wa.me/${data.whatsapp.replace(/\D/g, '')})`
+    : 'N/A';
+
+  const tgLink = data.telegram_user && data.telegram_user !== 'N/A'
+    ? `[Telegram](https://t.me/${data.telegram_user.replace(/^@/, '')})`
+    : 'N/A';
 
   const telegramMsg =
     `🚀 *New KORA Lead!*\n\n` +
     `👤 *Name:* ${data.name}\n` +
     `📧 *Email:* ${data.email}\n` +
     `📞 *Phone:* ${data.phone}\n` +
-    `📱 *WhatsApp:* ${waLink}\n` +
     `📱 *Telegram:* ${tgLink}\n` +
-    `🏋️ *Service:* ${data.service}\n` +
+    `📱 *WhatsApp:* ${waLink}\n` +
+    `🏋️ *Service:* ${data.service_type}\n` +
     `📝 *Msg:* ${data.message}`;
 
   try {
@@ -68,7 +72,6 @@ async function sendTelegramMessage(data) {
         disable_web_page_preview: true,
       }),
     });
-
     const result = await response.json();
     if (!result.ok) console.error('Telegram API error:', result);
     return result.ok;
@@ -84,23 +87,21 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // 1️⃣ Sanitize input
+  // --- Gather data from request ---
   const data = {
     name: req.body?.name || 'Unknown',
     email: req.body?.email || 'No Email',
     phone: req.body?.phone || 'No Phone',
     whatsapp: req.body?.whatsapp || 'N/A',
-    telegram: req.body?.telegram || 'N/A',
-    service: req.body?.service || 'General Inquiry',
-    message: req.body?.message || '',
+    telegram_user: req.body?.telegram || 'N/A', // <-- FIXED
+    service_type: req.body?.service || 'General Inquiry',
+    message: req.body?.message || 'No message provided',
   };
 
   try {
-    // 2️⃣ Save to database
     const dbResult = await saveLeadToDB(data);
     console.log('Lead saved to DB:', dbResult);
 
-    // 3️⃣ Send Telegram notification
     const telegramSent = await sendTelegramMessage(data);
     if (!telegramSent) console.warn('Telegram message not sent!');
 
