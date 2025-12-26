@@ -169,3 +169,4 @@ document.querySelectorAll(".gym-badge").forEach(btn => {
         }, 400);
     });
 });
+
