@@ -19,14 +19,17 @@ export default async function handler(req, res) {
 
   try {
         // 2️⃣ Create DB Connection (Vercel Safe)
-    connection = await mysql.createConnection({
-    host: process.env.MYSQL_HOST,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD,
-    database: process.env.MYSQL_DATABASE,
-    port: process.env.MYSQL_PORT || 3306,
-    ssl: false,
-    });
+   const connection = await mysql.createConnection({
+  host: process.env.MYSQL_HOST,
+  user: process.env.MYSQL_USER,
+  password: process.env.MYSQL_PASSWORD,
+  database: process.env.MYSQL_DATABASE,
+  port: process.env.MYSQL_PORT || 3306,
+  ssl: {
+    rejectUnauthorized: false // Accept self-signed certificates
+  },
+});
+
 
     // 3️⃣ Insert Lead
     await connection.execute(
