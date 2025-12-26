@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>KORA Admin • Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0f14;
+    --surface:#11161d;
+    --panel:#161b22;
+    --border:rgba(255,255,255,0.08);
+    --muted:#8b949e;
+    --text:#c9d1d9;
+    --text-bright:#f0f6fc;
+
+    --accent:#238636; 
+    --accent-hover:#2ea043;
+    --accent-soft:rgba(35,134,54,0.15);
+
+    --danger:#f85149;
+    --warning:#d29922;
+    --info:#58a6ff;
+
+    --radius:6px;
+    --shadow:0 8px 24px rgba(0,0,0,0.5);
+    --font:'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+
+  /* Reset & Base */
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;height:100vh;overflow:hidden}
+  button,input,select,textarea{font-family:inherit;font-size:14px}
+
+  /* --- VIEW MANAGEMENT --- */
+  .view-section { display: none; height: 100%; width: 100%; }
+  .view-section.active { display: block; }
+
+  /* --- LOGIN SCREEN STYLES --- */
+  .login-container {
+    display: flex; align-items: center; justify-content: center; height: 100vh;
+    background: radial-gradient(circle at top, #161b22 0%, #0b0f14 100%);
+  }
+  .login-card {
+    background: var(--surface); border: 1px solid var(--border);
+    width: 360px; padding: 32px; border-radius: 12px;
+    box-shadow: var(--shadow); text-align: center;
+  }
+  .login-logo {
+    width: 48px; height: 48px; background: var(--text-bright); color: var(--bg);
+    border-radius: 10px; font-weight: 800; font-size: 24px;
+    display: grid; place-items: center; margin: 0 auto 20px auto;
+  }
+  .login-title { font-size: 20px; font-weight: 600; color: var(--text-bright); margin-bottom: 8px; }
+  .login-sub { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+  
+  .login-form { display: flex; flex-direction: column; gap: 16px; }
+  .login-input {
+    background: var(--bg); border: 1px solid var(--border); color: var(--text-bright);
+    padding: 10px 12px; border-radius: var(--radius); outline: none; transition: border-color .2s;
+  }
+  .login-input:focus { border-color: var(--accent); }
+  .login-btn {
+    background: var(--accent); color: white; border: 0; padding: 10px;
+    border-radius: var(--radius); font-weight: 600; cursor: pointer; transition: background .2s;
+  }
+  .login-btn:hover { background: var(--accent-hover); }
+  .error-msg { color: var(--danger); font-size: 12px; margin-top: 10px; min-height: 18px; visibility: hidden; }
+  .error-msg.visible { visibility: visible; }
+
+  /* --- APP LAYOUT --- */
+  .app{display:grid;grid-template-columns:240px 1fr;height:100%}
+  @media(max-width:768px){.app{grid-template-columns:1fr}}
+
+  /* Sidebar */
+  .sidebar{background:var(--surface);border-right:1px solid var(--border);padding:20px;display:flex;flex-direction:column;height:100%}
+  @media(max-width:768px){.sidebar{display:none}} 
+  
+  .brand{display:flex;align-items:center;gap:12px;margin-bottom:24px;color:var(--text-bright)}
+  .logo{width:32px;height:32px;background:var(--text-bright);color:var(--bg);border-radius:6px;display:grid;place-items:center;font-weight:800;font-size:16px}
+  
+  .nav{display:flex;flex-direction:column;gap:4px}
+  .nav button{
+    background:transparent;border:0;color:var(--text);padding:8px 12px;
+    border-radius:var(--radius);text-align:left;cursor:pointer;font-weight:500;
+    transition:background .2s;
+  }
+  .nav button:hover{background:rgba(255,255,255,0.04)}
+  .nav button.active{background:var(--accent-soft);color:var(--text-bright);font-weight:600}
+
+  /* Main Content */
+  .main{display:flex;flex-direction:column;overflow:hidden;height:100%}
+  .topbar{
+    height:60px;border-bottom:1px solid var(--border);display:flex;align-items:center;
+    justify-content:space-between;padding:0 24px;background:var(--surface);
+  }
+
+  /* Components */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    padding:6px 14px;border-radius:var(--radius);font-weight:500;cursor:pointer;
+    border:1px solid var(--border);background:var(--panel);color:var(--text-bright);
+    transition:all .2s;
+  }
+  .btn:hover{background:rgba(255,255,255,0.1);border-color:var(--muted)}
+  .btn.primary{background:var(--accent);border-color:rgba(255,255,255,0.1);color:#fff}
+  .btn.primary:hover{background:var(--accent-hover)}
+  .btn.ghost{background:transparent;border-color:transparent;color:var(--muted)}
+  .btn.ghost:hover{color:var(--text-bright);background:rgba(255,255,255,0.05)}
+
+  .input-wrap{position:relative}
+  .search-input{
+    background:var(--bg);border:1px solid var(--border);color:var(--text-bright);
+    padding:6px 12px 6px 32px;border-radius:var(--radius);width:300px;outline:none;
+  }
+  .search-input:focus{border-color:var(--info)}
+  .search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:0.5;pointer-events:none}
+
+  /* Dashboard Grid */
+  .content{padding:24px;overflow-y:auto;display:flex;flex-direction:column;gap:20px;height:100%}
+
+  /* Stats Cards */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:16px}
+  .stat-card{background:var(--panel);border:1px solid var(--border);padding:16px;border-radius:var(--radius)}
+  .stat-label{color:var(--muted);font-size:12px;font-weight:500}
+  .stat-val{color:var(--text-bright);font-size:24px;font-weight:600;margin-top:4px}
+
+  /* Table Toolbar */
+  .toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+  .filters{display:flex;gap:8px}
+  select{background:var(--panel);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:var(--radius);outline:none}
+
+  /* Table */
+  .table-container{
+    background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+    overflow:hidden;display:flex;flex-direction:column;flex:1;min-height:400px;
+    position: relative; /* Needed for bulk toolbar positioning */
+  }
+  .table-scroll{overflow:auto;flex:1}
+  table{width:100%;border-collapse:collapse;white-space:nowrap}
+  th{
+    background:var(--surface);text-align:left;padding:12px 16px;font-size:12px;
+    color:var(--muted);font-weight:600;border-bottom:1px solid var(--border);
+    position:sticky;top:0;z-index:10;user-select:none;
+  }
+  th.sortable{cursor:pointer}
+  th.sortable:hover{color:var(--text-bright)}
+  td{padding:12px 16px;border-bottom:1px solid var(--border);color:var(--text)}
+  tr:last-child td{border-bottom:0}
+  tr:hover td{background:rgba(255,255,255,0.02)}
+
+  /* --- BULK ACTION TOOLBAR --- */
+  .bulk-bar {
+    position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%);
+    background: #1c2128; border: 1px solid var(--accent);
+    padding: 10px 24px; border-radius: 50px; display: none;
+    align-items: center; gap: 20px; box-shadow: var(--shadow); z-index: 20;
+    animation: slideUp 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes slideUp { from { opacity: 0; bottom: 40px; } to { opacity: 1; bottom: 60px; } }
+  .bulk-count { color: var(--text-bright); font-weight: 600; border-right: 1px solid var(--border); padding-right: 15px; }
+
+  /* Custom Checkbox Appearance */
+  input[type="checkbox"] {
+    accent-color: var(--accent);
+    width: 16px; height: 16px; cursor: pointer;
+  }
+
+  /* Badges */
+  .badge{display:inline-block;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:600;border:1px solid transparent}
+  .badge.new{background:rgba(56,139,253,0.15);color:#58a6ff;border-color:rgba(56,139,253,0.2)}
+  .badge.processed{background:rgba(35,134,54,0.15);color:#3fb950;border-color:rgba(35,134,54,0.2)}
+
+  /* Modal */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(2px);
+    display:none;align-items:center;justify-content:center;z-index:100;
+  }
+  .modal{
+    background:var(--panel);border:1px solid var(--border);border-radius:8px;
+    width:600px;max-width:90%;box-shadow:var(--shadow);display:flex;flex-direction:column;
+    max-height:90vh;
+  }
+  .modal-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+  .modal-head h3{margin:0;color:var(--text-bright)}
+  .modal-body{padding:20px;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .modal-foot{padding:16px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+
+  /* Read Only Fields */
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field.full{grid-column:1 / -1}
+  .field label{font-size:12px;color:var(--muted)}
+  .ro-value{
+    background:rgba(255,255,255,0.03);border:1px solid var(--border);
+    color:var(--text-bright);padding:8px;border-radius:var(--radius);
+    min-height:36px;display:flex;align-items:center;
+  }
+
+  /* Utilities */
+  .text-right{text-align:right}
+  .sort-icon{margin-left:4px;font-size:10px;opacity:0.6}
+</style>
+</head>
+<body>
+
+<div id="login-view" class="view-section active">
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-logo">K</div>
+      <div class="login-title">Admin Portal</div>
+      <div class="login-sub">Sign in to manage leads</div>
+      
+      <form class="login-form" id="loginForm">
+        <input type="text" id="username" class="login-input" placeholder="Username" autocomplete="off">
+        <input type="password" id="password" class="login-input" placeholder="Password">
+        <button type="submit" class="login-btn">Sign In</button>
+      </form>
+      <div id="loginError" class="error-msg">Invalid credentials. Try again.</div>
+    </div>
+  </div>
+</div>
+
+<div id="app-view" class="view-section">
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">K</div>
+        <div><strong>KORA</strong> Admin</div>
+      </div>
+      <nav class="nav">
+        <button class="active" onclick="setTab('unprocessed')" id="nav-unprocessed">Unprocessed</button>
+        <button onclick="setTab('processed')" id="nav-processed">Processed</button>
+        <button onclick="setTab('all')" id="nav-all">All Leads</button>
+      </nav>
+      
+      <div style="margin-top:auto">
+        <div class="stat-label" style="margin-bottom:8px">System</div>
+        <button class="btn ghost" style="width:100%;justify-content:flex-start;padding-left:0;margin-bottom:4px" onclick="resetData()">
+          <span style="opacity:0.7">↺</span> Reset Data
+        </button>
+        <button class="btn ghost" style="width:100%;justify-content:flex-start;padding-left:0;color:var(--danger)" onclick="handleLogout()">
+          <span style="opacity:0.7">⏻</span> Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="input-wrap">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" id="searchInput" placeholder="Search name, phone, email...">
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <span class="badge new" id="serverStatus">Admin View</span>
+          <div style="width:32px;height:32px;border-radius:50%;background:#333;display:grid;place-items:center;font-size:12px;font-weight:700">AD</div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="stats">
+          <div class="stat-card">
+            <div class="stat-label">Total Leads</div>
+            <div class="stat-val" id="kpi-total">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Unprocessed</div>
+            <div class="stat-val" style="color:var(--warning)" id="kpi-unprocessed">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Processed</div>
+            <div class="stat-val" style="color:var(--accent)" id="kpi-processed">0</div>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <div class="filters">
+            <select id="filterService" onchange="renderTable()">
+              <option value="">All Services</option>
+              <option value="In-Person">In-Person</option>
+              <option value="Online">Online</option>
+            </select>
+          </div>
+          <div style="display:flex;gap:8px">
+            <input type="file" id="fileInput" accept=".csv" style="display:none" onchange="importCSVFile(this)">
+            <button class="btn ghost" onclick="document.getElementById('fileInput').click()">Import CSV</button>
+            <button class="btn ghost" onclick="exportCSV()">Export CSV</button>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <div class="bulk-bar" id="bulkBar">
+             <div class="bulk-count" id="bulkCountDisplay">0 Selected</div>
+             <button class="btn primary" onclick="handleBulkAction(true)">Mark Processed</button>
+             <button class="btn" onclick="handleBulkAction(false)">Mark Unprocessed</button>
+             <button class="btn ghost" onclick="clearSelection()">Cancel</button>
+          </div>
+
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:40px"><input type="checkbox" id="masterCheckbox" onclick="toggleAllRows()"></th>
+                  <th class="sortable" onclick="setSort('full_name')">Name <span id="sort-full_name" class="sort-icon"></span></th>
+                  <th class="sortable" onclick="setSort('service_type')">Service <span id="sort-service_type" class="sort-icon"></span></th>
+                  <th>Phone</th>
+                  <th class="sortable" onclick="setSort('processed')">State <span id="sort-processed" class="sort-icon"></span></th>
+                  <th class="sortable" onclick="setSort('created_at')">Submitted <span id="sort-created_at" class="sort-icon">▼</span></th>
+                  <th class="text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody">
+              </tbody>
+            </table>
+          </div>
+          <div style="padding:12px 16px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--surface)">
+            <div style="font-size:12px;color:var(--muted)" id="pageInfo">Showing 0-0 of 0</div>
+            <div style="display:flex;gap:4px" id="pagination"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modalTitle">Lead Details</h3>
+      <button class="btn ghost" onclick="closeModal()" style="padding:4px 8px;font-size:18px">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Full Name</label>
+        <div class="ro-value" id="ro-name"></div>
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <div class="ro-value" id="ro-email"></div>
+      </div>
+      <div class="field">
+        <label>Phone</label>
+        <div class="ro-value" id="ro-phone"></div>
+      </div>
+      <div class="field">
+        <label>Telegram</label>
+        <div class="ro-value" id="ro-telegram"></div>
+      </div>
+      <div class="field">
+        <label>Service Type</label>
+        <div class="ro-value" id="ro-service"></div>
+      </div>
+      <div class="field">
+        <label>Submitted Date</label>
+        <div class="ro-value" id="ro-date"></div>
+      </div>
+      <div class="field full">
+        <label>Customer Message / Notes</label>
+        <div class="ro-value" id="ro-notes" style="height:auto;align-items:flex-start;min-height:80px"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn ghost" onclick="closeModal()">Close</button>
+      <button class="btn primary" id="btnProcess" onclick="modalToggleProcess()">Mark Processed</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// --- AUTHENTICATION ---
+const AUTH_KEY = 'kora_auth_token';
+const SESSION_TOKEN = 'secret_session_123';
+
+document.addEventListener('DOMContentLoaded', () => {
+  const token = localStorage.getItem(AUTH_KEY);
+  if (token === SESSION_TOKEN) showApp(); else showLogin();
+});
+
+document.getElementById('loginForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const u = document.getElementById('username').value.trim();
+  const p = document.getElementById('password').value.trim();
+  const err = document.getElementById('loginError');
+  if(u === 'admin' && p === 'password') {
+    localStorage.setItem(AUTH_KEY, SESSION_TOKEN);
+    err.classList.remove('visible');
+    showApp();
+  } else err.classList.add('visible');
+});
+
+function handleLogout() { localStorage.removeItem(AUTH_KEY); showLogin(); }
+function showLogin() { 
+  document.getElementById('login-view').classList.add('active'); 
+  document.getElementById('app-view').classList.remove('active');
+  document.getElementById('password').value = ''; 
+}
+function showApp() { 
+  document.getElementById('login-view').classList.remove('active'); 
+  document.getElementById('app-view').classList.add('active');
+  loadData(); setupSearchListener(); 
+}
+
+// --- DATA & STATE ---
+let leads = [];
+let filtered = [];
+let selectedIds = new Set();
+let currentModalId = null;
+const STORAGE_KEY = 'kora_leads_v5';
+
+let state = { tab: 'unprocessed', search: '', page: 1, limit: 10, sortKey: 'created_at', sortDesc: true };
+
+function loadData() {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  leads = stored ? JSON.parse(stored) : [
+    { id: '1', full_name: 'Alex Morgan', email: 'alex@test.com', phone: '+251 911 223344', telegram: '@alexm', service_type: 'In-Person', processed: false, created_at: new Date().toISOString(), notes: 'Interested in strength training.' },
+    { id: '2', full_name: 'Sarah Connor', email: 'sarah@test.com', phone: '+251 922 556677', telegram: '', service_type: 'Online', processed: true, created_at: new Date(Date.now() - 86400000).toISOString(), notes: 'Sent pricing PDF.' },
+    { id: '3', full_name: 'John Wick', email: 'jw@test.com', phone: '+251 900 000000', telegram: '@baba', service_type: 'In-Person', processed: true, created_at: new Date(Date.now() - 86400000 * 5).toISOString(), notes: 'Paid for 3 months.' }
+  ];
+  saveData();
+  processData();
+}
+
+function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(leads)); }
+function resetData() { if(confirm("Reset demo data?")) { localStorage.removeItem(STORAGE_KEY); loadData(); } }
+
+function processData() {
+  document.getElementById('kpi-total').textContent = leads.length;
+  document.getElementById('kpi-unprocessed').textContent = leads.filter(l => !l.processed).length;
+  document.getElementById('kpi-processed').textContent = leads.filter(l => l.processed).length;
+
+  let result = leads.slice();
+  if (state.tab === 'unprocessed') result = result.filter(l => !l.processed);
+  else if (state.tab === 'processed') result = result.filter(l => l.processed);
+
+  const q = state.search.toLowerCase();
+  if (q) result = result.filter(l => (l.full_name || '').toLowerCase().includes(q) || (l.phone || '').includes(q) || (l.email || '').toLowerCase().includes(q));
+
+  const sFilter = document.getElementById('filterService').value;
+  if(sFilter) result = result.filter(l => l.service_type === sFilter);
+
+  result.sort((a, b) => {
+    let valA = a[state.sortKey] || ''; let valB = b[state.sortKey] || '';
+    if(state.sortKey === 'created_at') { valA = new Date(valA); valB = new Date(valB); }
+    if (valA < valB) return state.sortDesc ? 1 : -1;
+    if (valA > valB) return state.sortDesc ? -1 : 1;
+    return 0;
+  });
+
+  filtered = result;
+  const maxPage = Math.ceil(filtered.length / state.limit) || 1;
+  if (state.page > maxPage) state.page = 1;
+  renderTable();
+}
+
+// --- BULK ACTION LOGIC ---
+function toggleRowSelect(id) {
+  if (selectedIds.has(id)) selectedIds.delete(id);
+  else selectedIds.add(id);
+  updateBulkUI();
+}
+
+function toggleAllRows() {
+  const master = document.getElementById('masterCheckbox');
+  const start = (state.page - 1) * state.limit;
+  const pageData = filtered.slice(start, start + state.limit);
+  
+  pageData.forEach(l => {
+    if (master.checked) selectedIds.add(l.id);
+    else selectedIds.delete(l.id);
+  });
+  renderTable(); 
+  updateBulkUI();
+}
+
+function updateBulkUI() {
+  const bar = document.getElementById('bulkBar');
+  const countDisplay = document.getElementById('bulkCountDisplay');
+  if (selectedIds.size > 0) {
+    bar.style.display = 'flex';
+    countDisplay.innerText = `${selectedIds.size} Selected`;
+  } else {
+    bar.style.display = 'none';
+  }
+}
+
+function clearSelection() {
+  selectedIds.clear();
+  document.getElementById('masterCheckbox').checked = false;
+  updateBulkUI();
+  renderTable();
+}
+
+function handleBulkAction(status) {
+  leads.forEach(l => {
+    if (selectedIds.has(l.id)) l.processed = status;
+  });
+  saveData();
+  clearSelection();
+  processData();
+}
+
+// --- TABLE RENDERING ---
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+  const start = (state.page - 1) * state.limit;
+  const end = start + state.limit;
+  const pageData = filtered.slice(start, end);
+
+  if (pageData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted)">No leads found.</td></tr>`;
+    document.getElementById('pageInfo').innerText = '0 results';
+    document.getElementById('pagination').innerHTML = '';
+    return;
+  }
+
+  // Check if all items on the current page are selected to keep master checkbox in sync
+  const allPageSelected = pageData.every(l => selectedIds.has(l.id)) && pageData.length > 0;
+  document.getElementById('masterCheckbox').checked = allPageSelected;
+
+  pageData.forEach(lead => {
+    const tr = document.createElement('tr');
+    const isChecked = selectedIds.has(lead.id) ? 'checked' : '';
+    const dateStr = new Date(lead.created_at).toLocaleDateString();
+    const statusBadge = lead.processed ? `<span class="badge processed">Processed</span>` : `<span class="badge new">New</span>`;
+
+    tr.innerHTML = `
+      <td><input type="checkbox" ${isChecked} onclick="toggleRowSelect('${lead.id}')"></td>
+      <td>
+        <div style="font-weight:500;color:var(--text-bright)">${esc(lead.full_name)}</div>
+        <div style="font-size:11px;color:var(--muted)">${esc(lead.telegram)}</div>
+      </td>
+      <td>${esc(lead.service_type)}</td>
+      <td>${esc(lead.phone)}</td>
+      <td>${statusBadge}</td>
+      <td style="font-size:12px;color:var(--muted)">${dateStr}</td>
+      <td class="text-right">
+        <button class="btn ghost" onclick="viewDetails('${lead.id}')">View</button>
+        <button class="btn primary" style="${lead.processed ? 'background:#333' : ''}" onclick="toggleProcess('${lead.id}')">
+          ${lead.processed ? 'Undo' : 'Process'}
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('pageInfo').innerText = `Showing ${start + 1}-${Math.min(end, filtered.length)} of ${filtered.length}`;
+  renderPagination(Math.ceil(filtered.length / state.limit));
+  updateSortIcons();
+}
+
+function renderPagination(totalPages) {
+  const container = document.getElementById('pagination');
+  container.innerHTML = '';
+  if (totalPages <= 1) return;
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement('button');
+    btn.innerText = i; btn.className = `btn ${i === state.page ? 'primary' : 'ghost'}`;
+    btn.style.padding = '4px 10px'; btn.onclick = () => { state.page = i; renderTable(); };
+    container.appendChild(btn);
+  }
+}
+
+function setTab(tabName) {
+  state.tab = tabName; state.page = 1;
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(`nav-${tabName}`).classList.add('active');
+  processData();
+}
+
+function setSort(key) {
+  if (state.sortKey === key) state.sortDesc = !state.sortDesc;
+  else { state.sortKey = key; state.sortDesc = true; }
+  processData();
+}
+
+function updateSortIcons() {
+  document.querySelectorAll('.sort-icon').forEach(el => el.innerText = '');
+  const el = document.getElementById(`sort-${state.sortKey}`);
+  if(el) el.innerText = state.sortDesc ? '▼' : '▲';
+}
+
+function setupSearchListener() {
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    state.search = e.target.value.trim(); state.page = 1; processData();
+  });
+}
+
+function toggleProcess(id) {
+  const lead = leads.find(l => l.id === id);
+  if (lead) { lead.processed = !lead.processed; saveData(); processData(); if(currentModalId === id) updateModalButton(lead); }
+}
+
+const modalOverlay = document.getElementById('modalOverlay');
+function viewDetails(id) {
+  const lead = leads.find(l => l.id === id);
+  if(!lead) return; currentModalId = id;
+  document.getElementById('ro-name').textContent = lead.full_name || '-';
+  document.getElementById('ro-email').textContent = lead.email || '-';
+  document.getElementById('ro-phone').textContent = lead.phone || '-';
+  document.getElementById('ro-telegram').textContent = lead.telegram || '-';
+  document.getElementById('ro-service').textContent = lead.service_type || '-';
+  document.getElementById('ro-date').textContent = new Date(lead.created_at).toLocaleString();
+  document.getElementById('ro-notes').textContent = lead.notes || 'No message provided.';
+  updateModalButton(lead); modalOverlay.style.display = 'flex';
+}
+
+function updateModalButton(lead) {
+  const btn = document.getElementById('btnProcess');
+  btn.textContent = lead.processed ? 'Undo Process' : 'Mark Processed';
+  btn.style.background = lead.processed ? '#333' : 'var(--accent)';
+}
+function modalToggleProcess() { if(currentModalId) toggleProcess(currentModalId); }
+function closeModal() { modalOverlay.style.display = 'none'; currentModalId = null; }
+
+function exportCSV() {
+  const headers = ['ID', 'Name', 'Phone', 'Email', 'Telegram', 'Service', 'Processed', 'Date', 'Notes'];
+  const rows = filtered.map(l => [l.id, l.full_name, l.phone, l.email, l.telegram, l.service_type, l.processed ? 'Yes' : 'No', l.created_at, l.notes]);
+  let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n" + rows.map(e => e.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+  const link = document.createElement("a"); link.setAttribute("href", encodeURI(csvContent)); link.setAttribute("download", "kora_leads.csv");
+  document.body.appendChild(link); link.click(); document.body.removeChild(link);
+}
+
+function importCSVFile(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const lines = e.target.result.split('\n').filter(line => line.trim() !== '');
+    const newLeads = [];
+    for (let i = 1; i < lines.length; i++) {
+      const cols = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
+      if(cols.length < 2) continue;
+      newLeads.push({ id: cols[0] || Math.random().toString(36).substr(2, 9), full_name: cols[1] || 'Unknown', phone: cols[2] || '', email: cols[3] || '', telegram: cols[4] || '', service_type: cols[5] || 'Online', processed: (cols[6] && cols[6].toLowerCase() === 'yes'), created_at: cols[7] ? new Date(cols[7]).toISOString() : new Date().toISOString(), notes: cols[8] || '' });
+    }
+    leads = [...newLeads, ...leads]; saveData(); processData(); alert(`Imported ${newLeads.length} leads.`); input.value = ''; 
+  };
+  reader.readAsText(file);
+}
+
+function esc(u) { return (u || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
+</script>
+</body>
+</html>
