@@ -57,8 +57,8 @@ async function sendTelegramMessage(data) {
     `👤 *Name:* ${data.name}\n` +
     `📧 *Email:* ${data.email}\n` +
     `📞 *Phone:* ${data.phone}\n` +
-    `📱 *Telegram:* ${tgLink}\n` +
-    `📱 *WhatsApp:* ${waLink}\n` +
+    `📱 *Telegram:* ${data.telegram_user}\n` +
+    `📱 *WhatsApp:* ${data.whatsapp}\n` +
     `🏋️ *Service:* ${data.service}\n` +
     `📝 *Msg:* ${data.message}`;
 
