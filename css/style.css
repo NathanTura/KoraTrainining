@@ -356,7 +356,7 @@ section {
 
 /* Hover effect */
 .gym-badge:hover {
-  background-color: var(--kora-green);
+  background-color: lightgrey;
   transform: translateY(-2px) scale(1.02);
   box-shadow: 0 6px 15px rgba(85, 85, 85, 0.12);
 }
