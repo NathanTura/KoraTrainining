@@ -8,19 +8,18 @@ async function saveLeadToDB(data) {
     password: process.env.MYSQL_PASSWORD,
     database: process.env.MYSQL_DATABASE,
     port: process.env.MYSQL_PORT || 3306,
-    ssl: {
-      rejectUnauthorized: false, // Accept self-signed certs
-    },
+    ssl: { rejectUnauthorized: false },
   });
 
   const query = `
-    INSERT INTO leads (name, email, phone, telegram_user, service_type, message)
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO leads (name, email, phone, whatsapp, telegram_user, service_type, message)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
   `;
   const values = [
     data.name,
     data.email,
     data.phone,
+    data.whatsapp,
     data.telegram,
     data.service,
     data.message,
@@ -34,6 +33,7 @@ async function saveLeadToDB(data) {
   }
 }
 
+// --- Helper: Send Telegram notification ---
 async function sendTelegramMessage(data) {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
@@ -44,13 +44,20 @@ async function sendTelegramMessage(data) {
   }
 
   const cleanPhone = data.phone.replace(/\D/g, '');
-  const waLink = cleanPhone ? `[WhatsApp](https://wa.me/${cleanPhone})` : 'N/A';
+  const waLink = data.whatsapp
+    ? `[WhatsApp](https://wa.me/${data.whatsapp.replace(/\D/g, '')})`
+    : 'N/A';
+
+  const tgLink = data.telegram.includes('@')
+    ? `[Telegram](https://t.me/${data.telegram.replace('@', '')})`
+    : data.telegram;
 
   const telegramMsg =
     `🚀 *New KORA Lead!*\n\n` +
     `👤 *Name:* ${data.name}\n` +
     `📧 *Email:* ${data.email}\n` +
     `📞 *Phone:* ${data.phone}\n` +
+    `📱 *Telegram:* ${tgLink}\n` +
     `📱 *WhatsApp:* ${waLink}\n` +
     `🏋️ *Service:* ${data.service}\n` +
     `📝 *Msg:* ${data.message}`;
@@ -66,13 +73,9 @@ async function sendTelegramMessage(data) {
         disable_web_page_preview: true,
       }),
     });
-
     const result = await response.json();
-    if (!result.ok) {
-      console.error('Telegram API error:', result);
-      return false;
-    }
-    return true;
+    if (!result.ok) console.error('Telegram API error:', result);
+    return result.ok;
   } catch (err) {
     console.error('Failed to send Telegram message:', err);
     return false;
@@ -81,32 +84,26 @@ async function sendTelegramMessage(data) {
 
 // --- API Handler ---
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  // 1️⃣ Sanitize input
   const data = {
     name: req.body?.name || 'Unknown',
     email: req.body?.email || 'No Email',
     phone: req.body?.phone || 'No Phone',
+    whatsapp: req.body?.whatsapp || 'N/A',
     telegram: req.body?.telegram || 'N/A',
     service: req.body?.service || 'General Inquiry',
     message: req.body?.message || 'No message provided',
   };
 
-  let dbResult, telegramSent;
   try {
-    // 2️⃣ Save to database
-    dbResult = await saveLeadToDB(data);
+    const dbResult = await saveLeadToDB(data);
     console.log('Lead saved to DB:', dbResult);
 
-    // 3️⃣ Send Telegram notification
-    telegramSent = await sendTelegramMessage(data);
+    const telegramSent = await sendTelegramMessage(data);
     if (!telegramSent) console.warn('Telegram message not sent!');
 
     return res.status(200).json({ success: true, telegramSent });
-
   } catch (err) {
     console.error('API ERROR:', err);
     return res.status(500).json({ success: false, error: err.message });
