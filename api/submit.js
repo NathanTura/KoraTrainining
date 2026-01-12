@@ -1,37 +1,3 @@
-import mysql from 'mysql2/promise';
-
-// --- Save lead to DB ---
-async function saveLeadToDB(data) {
-  const connection = await mysql.createConnection({
-    host: process.env.MYSQL_HOST,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD,
-    database: process.env.MYSQL_DATABASE,
-    port: process.env.MYSQL_PORT || 3306,
-  });
-
-  const query = `
-    INSERT INTO leads (name, email, phone, whatsapp_user, telegram_user, service_type, message)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `;
-  const values = [
-    data.name,
-    data.email,
-    data.phone,
-    data.whatsapp_user,
-    data.telegram_user,
-    data.service_type,
-    data.message,
-  ];
-
-  try {
-    const [result] = await connection.execute(query, values);
-    return result;
-  } finally {
-    await connection.end();
-  }
-}
-
 // --- Send Telegram notification ---
 async function sendTelegramMessage(data) {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
@@ -40,7 +6,7 @@ async function sendTelegramMessage(data) {
   if (!botToken || !chatId) return false;
 
   const waLink = data.whatsapp_user !== 'N/A'
-    ? `[WhatsApp](https://wa.me/${data.whatsapp_user.replace(/\D/g,'')})`
+    ? `[WhatsApp](https://wa.me/${data.whatsapp_user.replace(/\D/g, '')})`
     : 'N/A';
 
   const tgLink = data.telegram_user !== 'N/A'
@@ -91,7 +57,6 @@ export default async function handler(req, res) {
   };
 
   try {
-    await saveLeadToDB(data);
     await sendTelegramMessage(data);
     return res.status(200).json({ success: true });
   } catch (err) {

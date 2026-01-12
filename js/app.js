@@ -3,11 +3,11 @@ function showPopup(title, message, isError = false) {
     const popup = document.getElementById('custom-popup');
     document.getElementById('popup-title').innerText = title;
     document.getElementById('popup-message').innerText = message;
-    
+
     // Set icon based on status
     const iconElement = document.querySelector('.popup-icon');
     iconElement.innerText = isError ? "❌" : "✅";
-    
+
     popup.style.display = 'flex';
     // Small delay to allow the browser to register display:flex before adding the active class for animation
     setTimeout(() => popup.classList.add('active'), 10);
@@ -22,13 +22,34 @@ function closePopup() {
     }, 300);
 }
 
-// --- 2. FORM SUBMISSION LOGIC ---
+// --- 2. MOBILE MENU LOGIC ---
+const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+const mobileMenuClose = document.getElementById('mobile-menu-close');
+const mobileMenu = document.getElementById('mobile-menu');
+const mobileMenuLinks = document.querySelectorAll('.mobile-menu-content a');
+
+function toggleMobileMenu() {
+    mobileMenu.classList.toggle('active');
+    document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+}
+
+if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+if (mobileMenuClose) mobileMenuClose.addEventListener('click', toggleMobileMenu);
+
+mobileMenuLinks.forEach(link => {
+    link.addEventListener('click', () => {
+        mobileMenu.classList.remove('active');
+        document.body.style.overflow = '';
+    });
+});
+
+// --- 3. FORM SUBMISSION LOGIC ---
 async function handleForm(e) {
     e.preventDefault();
-    
+
     const submitBtn = e.target.querySelector('button');
     const originalText = submitBtn.innerText;
-    
+
     // Using FormData ensures we capture values by the "name" attribute we added to the HTML
     const formData = new FormData(e.target);
     const service = document.getElementById('serviceType').value;
@@ -59,7 +80,7 @@ async function handleForm(e) {
 
         if (response.ok && result.success) {
             showPopup(
-                "Application Received!", 
+                "Application Received!",
                 `Thanks ${payload.name}. Your interest in ${service} is saved. A coach will contact you on Telegram shortly.`
             );
         } else {
@@ -85,9 +106,9 @@ function showForm(serviceName) {
     document.getElementById('lead-form-container').style.display = 'block';
     document.getElementById('selected-service').innerText = serviceName;
     document.getElementById('serviceType').value = serviceName;
-    
-    $('html, body').animate({ 
-        scrollTop: $("#start-training").offset().top - 50 
+
+    $('html, body').animate({
+        scrollTop: $("#start-training").offset().top - 50
     }, 500);
 }
 
@@ -134,14 +155,14 @@ window.addEventListener('scroll', function () {
 });
 
 // Smooth Scroll for Nav Links
-$('nav a, .footer-links a').on('click', function(event) {
+$('nav a, .footer-links a').on('click', function (event) {
     if (this.hash !== "") {
         event.preventDefault();
         const hash = this.hash;
         const navHeight = $('#navbar').outerHeight();
-        
-        $('html, body').animate({ 
-            scrollTop: $(hash).offset().top - navHeight 
+
+        $('html, body').animate({
+            scrollTop: $(hash).offset().top - navHeight
         }, 800);
     }
 });
