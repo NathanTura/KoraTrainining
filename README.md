@@ -8,7 +8,6 @@
   [![Backend](https://img.shields.io/badge/Backend-Serverless-green.svg)]()
 </div>
 
-We specialize in developing functional strength and metabolic conditioning through evidence-based programming.
 
 ---
 
