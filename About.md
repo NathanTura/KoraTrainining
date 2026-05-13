@@ -1,4 +1,7 @@
-# About KORA TRAINING CO.
+<div align="center">
+  <img src="assets/logo.png" alt="KORA Training Logo" width="150">
+  <h1>About KORA TRAINING CO.</h1>
+</div>
 
 ## Our Philosophy
 At **KORA Training Co.**, we believe that fitness is built on a foundation of structural integrity and evidence-based science. We move away from short-term trends and focus on the long-term mechanics of human progress.

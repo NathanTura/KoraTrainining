@@ -1,10 +1,14 @@
-# KORA TRAINING CO. 🏋️‍♂️
+<div align="center">
+  <img src="assets/logo.png" alt="KORA Training Logo" width="200">
+  <h1>KORA TRAINING CO.</h1>
 
-[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
-[![Web](https://img.shields.io/badge/Web-Static-orange.svg)]()
-[![Backend](https://img.shields.io/badge/Backend-Serverless-green.svg)]()
 
-**KORA Training Co.** is a premier high-performance coaching platform built on the architecture of human movement. We specialize in developing functional strength and metabolic conditioning through evidence-based programming.
+  [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
+  [![Web](https://img.shields.io/badge/Web-Static-orange.svg)]()
+  [![Backend](https://img.shields.io/badge/Backend-Serverless-green.svg)]()
+</div>
+
+We specialize in developing functional strength and metabolic conditioning through evidence-based programming.
 
 ---
 
