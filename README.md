@@ -1,9 +1,6 @@
 <div align="center">
   <img src="assets/logo.png" alt="KORA Training Logo" width="200">
   <h1>KORA TRAINING CO.</h1>
-
-
-  [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
   [![Web](https://img.shields.io/badge/Web-Static-orange.svg)]()
   [![Backend](https://img.shields.io/badge/Backend-Serverless-green.svg)]()
 </div>
@@ -12,7 +9,7 @@ We specialize in developing functional strength and metabolic conditioning throu
 
 ---
 
-## 🚀 Features
+## Features
 
 -   **Structural Coaching**: Focused on the mechanics of progress, not just trends.
 -   **In-Person Coaching**: 1-on-1 sessions at partnered high-performance facilities in Addis Ababa.
@@ -20,14 +17,14 @@ We specialize in developing functional strength and metabolic conditioning throu
 -   **Performance Nutrition**: Evidence-based dietary strategies to fuel your progress.
 -   **Automated Lead Management**: Seamless client application flow with instant Telegram notifications for the coaching team.
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 -   **Frontend**: HTML5, Vanilla CSS, JavaScript (ES6+).
 -   **Libraries**: jQuery, Slick Carousel (for transformations & reviews).
 -   **Backend**: Node.js Serverless Functions (located in `/api`).
 -   **Integrations**: Telegram Bot API for real-time lead alerts.
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 ├── api/            # Serverless functions (Telegram integration)
@@ -38,7 +35,7 @@ We specialize in developing functional strength and metabolic conditioning throu
 └── package.json    # Project dependencies
 ```
 
-## ⚙️ Setup & Deployment
+## Setup & Deployment
 
 1.  **Clone the repository**:
     ```bash
@@ -56,10 +53,6 @@ We specialize in developing functional strength and metabolic conditioning throu
     ```
 4.  **Deployment**:
     This project is designed to be deployed on platforms like **Vercel** or **Netlify** that support the `/api` directory for serverless functions.
-
-## 📜 License
-
-This project is licensed under the **ISC License**.
 
 ---
 
