@@ -427,19 +427,27 @@ section {
 
 @media (max-width: 600px) {
   .lead-form-container {
-    padding: 60px 20px 30px;
-    margin: 30px auto;
+    padding: 30px 20px;
+    margin: 20px auto;
+    width: 95%;
   }
   
   .back-btn {
-    top: 15px;
-    left: 15px;
-    padding: 6px 14px;
+    position: static;
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 8px 16px;
     font-size: 0.85rem;
   }
   
   .form-header-title {
     font-size: 1.5rem;
+    text-align: left;
+  }
+
+  .form-header-desc {
+    text-align: left;
+    margin-bottom: 20px;
   }
 }
 
@@ -456,8 +464,23 @@ section {
 }
 
 @media (max-width: 600px) {
+  .kora-form {
+    gap: 15px;
+  }
+
   .kora-form .form-row {
     grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .kora-form .form-group input,
+  .kora-form .form-group textarea {
+    padding: 12px 14px;
+  }
+
+  .form-submit {
+    padding: 15px;
+    font-size: 0.9rem;
   }
 }
 
