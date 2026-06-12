@@ -382,31 +382,55 @@ section {
   border-radius: 2px;
 }
 
-.form-group {
-  margin-bottom: 20px;
-  text-align: left;
+.kora-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.form-group label {
+.kora-form .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 600px) {
+  .kora-form .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.kora-form .form-group label {
   display: block;
-  margin-bottom: 8px;
-  font-weight: 700;
-  font-size: 0.8rem;
-  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 0.85rem;
   color: var(--kora-green);
+  margin-bottom: 8px;
+  text-transform: uppercase;
 }
 
-.form-group input {
+.kora-form .form-group input,
+.kora-form .form-group textarea {
   width: 100%;
-  padding: 15px;
-  border: 1px solid #ddd;
-  background: #fafafa;
+  padding: 14px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background: #fbfbfb;
   font-family: "Inter", sans-serif;
   outline: none;
+  transition: all 0.3s ease;
 }
 
-.form-group input:focus {
+.kora-form .form-group input:focus,
+.kora-form .form-group textarea:focus {
   border-color: var(--kora-green);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(44, 62, 58, 0.1);
+}
+
+.kora-form .form-group textarea {
+  resize: vertical;
+  min-height: 100px;
 }
 
 .form-submit {
@@ -419,6 +443,12 @@ section {
   cursor: pointer;
   text-transform: uppercase;
   letter-spacing: 1px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.form-submit:hover {
+  background-color: var(--kora-accent);
 }
 
 /* --- REDESIGNED FOOTER --- */

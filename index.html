@@ -495,45 +495,45 @@
         </p>
 
         <!-- Form -->
-       <form id="koraForm" onsubmit="handleForm(event)" style="display: flex; flex-direction: column; gap: 20px">
-    <div class="form-group" style="display: flex; flex-direction: column">
-        <label style="font-weight: 600; font-size: 0.85rem; color: var(--kora-green); margin-bottom: 5px;">Full Name</label>
-        <input type="text" name="name" required placeholder="Enter Full Name" style="padding: 15px; border: 1px solid #ddd; border-radius: 4px; outline: none;" />
-    </div>
+        <form id="koraForm" onsubmit="handleForm(event)" class="kora-form">
+          <div class="form-row">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="name" required placeholder="Enter Full Name" />
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="email" required placeholder="Enter Email" />
+            </div>
+          </div>
 
-    <div class="form-group" style="display: flex; flex-direction: column">
-        <label style="font-weight: 600; font-size: 0.85rem; color: var(--kora-green); margin-bottom: 5px;">Email Address</label>
-        <input type="email" name="email" required placeholder="Enter Email" style="padding: 15px; border: 1px solid #ddd; border-radius: 4px; outline: none;" />
-    </div>
+          <div class="form-row">
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" name="phone" required placeholder="Mobile Number" />
+            </div>
+            <div class="form-group">
+                <label>WhatsApp Number</label>
+                <input type="text" name="whatsapp" placeholder="WhatsApp Number" />
+            </div>
+          </div>
 
-    <div class="form-group" style="display: flex; flex-direction: column">
-        <label style="font-weight: 600; font-size: 0.85rem; color: var(--kora-green); margin-bottom: 5px;">Phone Number</label>
-        <input type="tel" name="phone" required placeholder="Mobile Number" style="padding: 15px; border: 1px solid #ddd; border-radius: 4px; outline: none;" />
-    </div>
+          <div class="form-group">
+              <label>Telegram Username (optional)</label>
+              <input type="text" name="telegram" placeholder="@username" />
+          </div>
 
-    <div class="form-group" style="display: flex; flex-direction: column">
-        <label style="font-weight: 600; font-size: 0.85rem; color: var(--kora-green); margin-bottom: 5px;">WhatsApp Number</label>
-        <input type="text" name="whatsapp" placeholder="WhatsApp Number" style="padding: 15px; border: 1px solid #ddd; border-radius: 4px; outline: none;" />
-    </div>
+          <div class="form-group">
+              <label>Additional Message (Optional)</label>
+              <textarea name="message" placeholder="Tell us about your goals..."></textarea>
+          </div>
 
+          <input type="hidden" id="serviceType" name="service" />
 
-<div class="form-group">
-    <label style="font-weight: 600; font-size: 0.85rem; color: var(--kora-green); margin-bottom: 5px;">Telegram Username (optional)</label>
-    <input type="text" name="telegram" placeholder="@username" style="padding: 15px; border: 1px solid #ddd; border-radius: 4px; outline: none;" />
-</div>
-
-
-    <div class="form-group" style="display: flex; flex-direction: column">
-        <label style="font-weight: 600; font-size: 0.85rem; color: var(--kora-green); margin-bottom: 5px;">Additional Message (Optional)</label>
-        <textarea name="message" placeholder="Tell us about your goals..." style="padding: 15px; border: 1px solid #ddd; border-radius: 4px; outline: none; resize: vertical; min-height: 80px;"></textarea>
-    </div>
-
-    <input type="hidden" id="serviceType" name="service" />
-
-    <button type="submit" class="form-submit" style="padding: 16px; background: var(--kora-green); color: #fff; font-weight: 700; border: none; border-radius: 4px; cursor: pointer;">
-        Submit Application
-    </button>
-</form>
+          <button type="submit" class="form-submit">
+              Submit Application
+          </button>
+        </form>
       </div>
     </section>
 

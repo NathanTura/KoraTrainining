@@ -98,7 +98,7 @@ async function handleForm(e) {
 document.getElementById("back-btn").addEventListener("click", () => {
     document.getElementById('lead-form-container').style.display = 'none';
     document.getElementById('selection-stage').style.display = 'block';
-    $('html, body').animate({ scrollTop: $("#start-training").offset().top }, 500);
+    $('html, body').animate({ scrollTop: $("#start-training").offset().top - 71 }, 500);
 });
 
 function showForm(serviceName) {
@@ -108,7 +108,7 @@ function showForm(serviceName) {
     document.getElementById('serviceType').value = serviceName;
 
     $('html, body').animate({
-        scrollTop: $("#start-training").offset().top - 50
+        scrollTop: $("#start-training").offset().top - 71
     }, 500);
 }
 
@@ -155,11 +155,11 @@ window.addEventListener('scroll', function () {
 });
 
 // Smooth Scroll for Nav Links
-$('nav a, .footer-links a').on('click', function (event) {
+$('nav a, .footer-links a, .hero-content a').on('click', function (event) {
     if (this.hash !== "") {
         event.preventDefault();
         const hash = this.hash;
-        const navHeight = $('#navbar').outerHeight();
+        const navHeight = 71; // Fixed nav height to prevent alignment issues
 
         $('html, body').animate({
             scrollTop: $(hash).offset().top - navHeight
